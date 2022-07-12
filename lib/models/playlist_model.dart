@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:songs_app/models/song_model.dart';
 
 class PlaylistModel {
@@ -11,6 +12,6 @@ class PlaylistModel {
   List<SongModel> songs;
   String name;
   String description;
-  dynamic avatar;
+  Image avatar;
 
 }
