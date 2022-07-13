@@ -31,7 +31,7 @@ class ResponseData {
         );
       }
     } on DioError catch (e) {
-      print(e);
+      
     }
     return null;
   }
