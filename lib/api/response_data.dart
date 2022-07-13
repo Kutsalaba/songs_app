@@ -69,7 +69,7 @@ class ResponseData {
   }
 
   String _addDuration(int index) {
-    String duration = document!.getElementsByTagName('time')[1].text;
+    String duration = document!.getElementsByTagName('time')[index].text;
     return _culturingStr(duration);
   }
 
