@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../api/response_data.dart';
 import '../models/playlist_model.dart';
@@ -64,7 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   : FutureBuilder<PlaylistModel?>(
                       future: ResponseData(url: userInput!).fetchPlaylist(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasData) {
                           return Column(
                             children: [
                               SizedBox(
@@ -132,6 +138,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                 },
                               ),
                             ],
+                          );
+                        } else if (snapshot.hasError) {
+                          final error = snapshot.error;
+                          return Center(
+                            child: Text(
+                              error.toString(),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 105.sp,
+                              ),
+                            ),
                           );
                         } else {
                           return const Center(
