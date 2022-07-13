@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
@@ -13,14 +11,13 @@ class ResponseData {
   });
 
   String url;
-  Document? document;
+  Document? _document;
 
   Future<PlaylistModel?> fetchPlaylist() async {
     try {
       Response response = await Dio().get(url);
       if (response.statusCode == 200) {
-        document = parse(response.data);
-        debugPrint(url);
+        _document = parse(response.data);
         return Future.value(
           PlaylistModel(
             name: _addPlaylistName(),
@@ -31,13 +28,13 @@ class ResponseData {
         );
       }
     } on DioError catch (e) {
-      
+      throw Failure('Incorrect url !');
     }
     return null;
   }
 
   List<SongModel> _addSongs() {
-    int currVal = document!
+    int currVal = _document!
         .getElementsByClassName(
             'songs-list-row songs-list-row--web-preview web-preview songs-list-row--two-lines songs-list-row--song')
         .length;
@@ -53,7 +50,7 @@ class ResponseData {
   }
 
   String _addSongName(int index) {
-    String name = document!
+    String name = _document!
         .getElementsByClassName('songs-list-row__song-name-wrapper')[index]
         .children[0]
         .text;
@@ -61,7 +58,7 @@ class ResponseData {
   }
 
   String _addArtistName(int index) {
-    String name = document!
+    String name = _document!
         .getElementsByClassName('songs-list-row__song-name-wrapper')[index]
         .children[1]
         .text;
@@ -69,19 +66,20 @@ class ResponseData {
   }
 
   String _addDuration(int index) {
-    String duration = document!.getElementsByTagName('time')[index].text;
+    String duration = _document!.getElementsByTagName('time')[index].text;
     return _culturingStr(duration);
   }
 
   String _addPlaylistName() {
     String name =
-        document!.getElementById('page-container__first-linked-element')!.text;
+        _document!.getElementById('page-container__first-linked-element')!.text;
     return _culturingStr(name);
   }
 
   String _addPlaylistDescription() {
-    String descrip =
-        document!.getElementsByClassName('truncated-content-container')[0].text;
+    String descrip = _document!
+        .getElementsByClassName('truncated-content-container')[0]
+        .text;
     return _culturingStr(descrip);
   }
 
@@ -96,4 +94,13 @@ class ResponseData {
     text = text.replaceAll('  ', '');
     return text;
   }
+}
+
+class Failure {
+  Failure(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
 }
